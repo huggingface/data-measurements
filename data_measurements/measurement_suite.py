@@ -1,7 +1,7 @@
 from typing import List, Type, Dict, Callable, Optional
 
 from datasets import load_dataset, Dataset
-from data_measurements.measurements import DataMeasurement, DataMeasurementFactory
+from data_measurements.measurements import DataMeasurement, DataMeasurementResults, DataMeasurementFactory
 
 
 class DataMeasurementSuite:
@@ -24,5 +24,5 @@ class DataMeasurementSuite:
             ) for m in measurements
         ]
 
-    def run(self) -> Dict:
+    def run(self) -> Dict[str, DataMeasurementResults]:
         return {m.name: m.measure(dataset=self.dataset) for m in self.measurements}

@@ -7,6 +7,17 @@ from evaluate import load as load_metric
 from datasets import Dataset
 
 
+class DataMeasurementResults(ABC):
+    @abc.abstractmethod
+    def to_figure(self):
+        # TODO: Set the output type hint for this...
+        raise NotImplementedError()
+
+    @abc.abstractmethod
+    def __eq__(self, other):
+        raise NotImplementedError()
+
+
 class DataMeasurement(ABC):
     def __init__(self, feature: str, *args, **kwargs):
         self.feature = feature
@@ -17,7 +28,7 @@ class DataMeasurement(ABC):
         raise NotImplementedError()
 
     @abc.abstractmethod
-    def measure(self, dataset: List[str]) -> Dict:
+    def measure(self, dataset: List[str]) -> DataMeasurementResults:
         raise NotImplementedError()
 
 
@@ -45,7 +56,7 @@ class EvaluateMixin:
         self.metric: evaluate.EvaluationModule = load_metric(self.name)
         super().__init__(*args, **kwargs)
 
-    def measure(self, dataset: Dataset):
+    def run_metric(self, dataset: Dataset) -> Dict:
         return self.metric.compute(data=dataset[self.feature])
 
 
@@ -58,14 +69,6 @@ class TokenizedDatasetMixin:
 
     def tokenize_dataset(self, dataset: Dataset) -> Dataset:
         return dataset.map(lambda x: {**x, "tokenized_text": self.tokenizer(x[self.feature])})
-
-    def measure(self, dataset: Dataset) -> Dict:
-        dataset = self.tokenize_dataset(dataset)
-        return self.measure_tokenized(dataset)
-
-    @abc.abstractmethod
-    def measure_tokenized(self, dataset: Dataset) -> Dict:
-        raise NotImplementedError()
 
 
 class LabelMeasurementMixin:

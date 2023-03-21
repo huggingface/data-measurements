@@ -2,3 +2,6 @@ pytest
 datasets
 evaluate
 scipy
+matplotlib
+seaborn
+plotly

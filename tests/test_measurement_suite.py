@@ -5,11 +5,18 @@ from data_measurements import DataMeasurementSuite
 
 @pytest.fixture
 def measurements(mock_measurements):
+    mock_measurements, _ = mock_measurements
     return [
         mock_measurements.TextDuplicates.value,
         mock_measurements.TextLengths.value,
         mock_measurements.LabelDistribution.value,
     ]
+
+
+@pytest.fixture
+def expected_results(mock_measurements):
+    _, mock_results = mock_measurements
+    return mock_results
 
 
 @pytest.fixture
@@ -30,26 +37,13 @@ def test_measurement_suite_initialize(suite, mock_load_dataset, measurements, mo
     assert len(suite.measurements) == len(measurements)
 
 
-def test_measurement_suite_run(suite, measurements, monkeypatch):
+def test_measurement_suite_run(suite, measurements, expected_results, monkeypatch):
     assert suite.measurements[0].feature == "text"
     assert suite.measurements[1].feature == "text"
     assert suite.measurements[2].feature == "label"
 
     results = suite.run()
-    assert results == {
-        "text_duplicates": {
-            "duplicate_fraction": 0.25
-        },
-        "text_lengths": {
-            "average_instance_length": 2.25,
-            "standard_dev_instance_length": 0.5,
-            "num_instance_lengths": 2
-        },
-        "label_distribution": {
-            "label_distribution": {
-                "labels": [1, 0, 2],
-                "fractions": [0.1, 0.6, 0.3]
-            },
-            "label_skew": 0.5
-        }
-    }
+
+    assert results["text_duplicates"] == expected_results[0]
+    assert results["text_lengths"] == expected_results[1]
+    assert results["label_distribution"] == expected_results[2]

@@ -1,11 +1,12 @@
+import pandas as pd
 import pytest
 from unittest.mock import MagicMock
 from enum import Enum
 from typing import Callable
 from data_measurements.measurements import (
-    TextDuplicates,
-    TextLengths,
-    LabelDistribution,
+    TextDuplicates, TextDuplicatesResults,
+    TextLengths, TextLengthsResults,
+    LabelDistribution, LabelDistributionResults,
 )
 
 from datasets import Dataset
@@ -49,33 +50,40 @@ class MockMeasureMixin:
 
 @pytest.fixture()
 def mock_measurements():
+    mock_results = [
+        TextDuplicatesResults(
+            duplicate_fraction=0.25
+        ),
+        TextLengthsResults(
+            average_instance_length=2.25,
+            standard_dev_instance_length=0.5,
+            num_instance_lengths=2,
+            lengths=pd.DataFrame()
+        ),
+        LabelDistributionResults(
+            label_distribution={
+                "labels": [1, 0, 2],
+                "fractions": [0.1, 0.6, 0.3]
+            },
+            label_skew=0.5,
+        )
+    ]
+
     class MockedTextDuplicates(MockMeasureMixin, TextDuplicates):
         def measure(self, dataset: Dataset):
-            return {
-                "duplicate_fraction": 0.25
-            }
+            return mock_results[0]
 
     class MockedTextLengths(MockMeasureMixin, TextLengths):
         def measure(self, dataset: Dataset):
-            return {
-                "average_instance_length": 2.25,
-                "standard_dev_instance_length": 0.5,
-                "num_instance_lengths": 2
-            }
+            return mock_results[1]
 
     class MockedLabelDistribution(MockMeasureMixin, LabelDistribution):
         def measure(self, dataset: Dataset):
-            return {
-                "label_distribution": {
-                    "labels": [1, 0, 2],
-                    "fractions": [0.1, 0.6, 0.3]
-                },
-                "label_skew": 0.5
-            }
+            return mock_results[2]
 
     class Measurements(Enum):
         TextDuplicates = MockedTextDuplicates
         TextLengths = MockedTextLengths
         LabelDistribution = MockedLabelDistribution
 
-    return Measurements
+    return Measurements, mock_results
