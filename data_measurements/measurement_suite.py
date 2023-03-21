@@ -12,10 +12,16 @@ class DataMeasurementSuite:
             split: str,
             measurements: List[Type[DataMeasurement]],
             tokenizer: Optional[Callable[[str], List[str]]] = None,
+            label: Optional[str] = None,
     ):
         self.dataset: Dataset = load_dataset(dataset, split=split)
         self.measurements = [
-            DataMeasurementFactory.create(m, tokenizer=tokenizer, feature=feature) for m in measurements
+            DataMeasurementFactory.create(
+                m,
+                tokenizer=tokenizer,
+                feature=feature,
+                label=label
+            ) for m in measurements
         ]
 
     def run(self) -> Dict:

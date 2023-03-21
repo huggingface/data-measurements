@@ -1,3 +1,4 @@
 pytest
 datasets
 evaluate
+scipy

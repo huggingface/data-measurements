@@ -31,15 +31,22 @@ class DataMeasurementFactory():
         if issubclass(measurement, TokenizedDatasetMixin):
             arguments["tokenizer"] = kwargs["tokenizer"]
 
+        if issubclass(measurement, LabelMeasurementMixin):
+            arguments["feature"] = kwargs["label"]
+
         return measurement(**arguments)
 
 
 class EvaluateMixin:
     name: str
+    feature: str
 
     def __init__(self, *args, **kwargs):
         self.metric: evaluate.EvaluationModule = load_metric(self.name)
         super().__init__(*args, **kwargs)
+
+    def measure(self, dataset: Dataset):
+        return self.metric.compute(data=dataset[self.feature])
 
 
 class TokenizedDatasetMixin:
@@ -59,3 +66,7 @@ class TokenizedDatasetMixin:
     @abc.abstractmethod
     def measure_tokenized(self, dataset: Dataset) -> Dict:
         raise NotImplementedError()
+
+
+class LabelMeasurementMixin:
+    pass
