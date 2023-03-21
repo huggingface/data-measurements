@@ -1,7 +1,7 @@
-from typing import List, Type, Dict
+from typing import List, Type, Dict, Callable, Optional
 
-from datasets import load_dataset
-from data_measurements.measurements import DataMeasurement
+from datasets import load_dataset, Dataset
+from data_measurements.measurements import DataMeasurement, DataMeasurementFactory
 
 
 class DataMeasurementSuite:
@@ -11,9 +11,12 @@ class DataMeasurementSuite:
             feature: str,
             split: str,
             measurements: List[Type[DataMeasurement]],
+            tokenizer: Optional[Callable[[str], List[str]]] = None,
     ):
-        self.dataset: List[str] = load_dataset(dataset, split=split)[feature]
-        self.measurements = [DataMeasurement.create(m) for m in measurements]
+        self.dataset: Dataset = load_dataset(dataset, split=split)
+        self.measurements = [
+            DataMeasurementFactory.create(m, tokenizer=tokenizer, feature=feature) for m in measurements
+        ]
 
     def run(self) -> Dict:
         return {m.name: m.measure(dataset=self.dataset) for m in self.measurements}

@@ -1,11 +1,11 @@
-from typing import List, Dict
+from typing import Dict
+from datasets import Dataset
 
-from data_measurements.measurements.base import DataMeasurement
+from data_measurements.measurements.base import DataMeasurement, EvaluateMixin
 
 
-class TextDuplicates(DataMeasurement):
-    def __init__(self):
-        super().__init__(metric_name="text_duplicates")
+class TextDuplicates(EvaluateMixin, DataMeasurement):
+    name = "text_duplicates"
 
-    def measure(self, dataset: List[str]) -> Dict:
-        return self.metric.compute(data=dataset)["duplicate_fraction"]
+    def measure(self, dataset: Dataset) -> Dict:
+        return self.metric.compute(data=dataset[self.feature])["duplicate_fraction"]

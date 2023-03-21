@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
 from data_measurements import DataMeasurementSuite
-from data_measurements.measurements import TextDuplicates
+from data_measurements.measurements import TextDuplicates, TextLengths
 
 
 def test_measurement_suite_initialize(monkeypatch):
@@ -15,11 +15,13 @@ def test_measurement_suite_initialize(monkeypatch):
         dataset="imdb",
         measurements=[
             TextDuplicates,
+            TextLengths,
         ],
         feature="text",
         split="train",
+        tokenizer=lambda x: x,
     )
 
     load_dataset.assert_called_with("imdb", split="train")
 
-    assert len(suite.measurements) == 1
+    assert len(suite.measurements) == 2
