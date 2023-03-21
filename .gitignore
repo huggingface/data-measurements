@@ -1,5 +1,7 @@
 .gitignore
 .DS_Store
+.pytest_cache
+.python-version
 *.pyc
 log_files
 log_files/*
