@@ -64,7 +64,8 @@ class TokenizedDatasetMixin:
     tokenizer: Callable[[str], List[str]]
     feature: str
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, tokenizer: Callable[[str], List[str]], *args, **kwargs):
+        self.tokenizer = tokenizer
         super().__init__(*args, **kwargs)
 
     def tokenize_dataset(self, dataset: Dataset) -> Dataset:

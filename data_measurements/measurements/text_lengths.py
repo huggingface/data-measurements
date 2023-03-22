@@ -1,4 +1,3 @@
-from typing import List, Callable
 from datasets import Dataset
 from pandas import DataFrame
 
@@ -55,8 +54,7 @@ class TextLengthsResults(DataMeasurementResults):
 class TextLengths(TokenizedDatasetMixin, DataMeasurement):
     name = "text_lengths"
 
-    def __init__(self, tokenizer: Callable[[str], List[str]], *args, **kwargs):
-        self.tokenizer = tokenizer
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def measure(self, dataset: Dataset) -> TextLengthsResults:
