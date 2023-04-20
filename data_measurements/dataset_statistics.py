@@ -537,9 +537,9 @@ def count_vocab_frequencies(tokenized_df):
     )
     # We do this to calculate per-word statistics
     # Fast calculation of single word counts
-    logs.info(
-        "Fitting dummy tokenization to make matrix using the previous tokenization"
-    )
+    # logs.info(
+    #     "Fitting dummy tokenization to make matrix using the previous tokenization"
+    # )
     cvec.fit(tokenized_df[TOKENIZED_FIELD])
     document_matrix = cvec.transform(tokenized_df[TOKENIZED_FIELD])
     batches = np.linspace(0, tokenized_df.shape[0], _NUM_VOCAB_BATCHES).astype(
@@ -547,8 +547,8 @@ def count_vocab_frequencies(tokenized_df):
     i = 0
     tf = []
     while i < len(batches) - 1:
-        if i % 100 == 0:
-            logs.info("%s of %s vocab batches" % (str(i), str(len(batches))))
+        # if i % 100 == 0:
+        #     logs.info("%s of %s vocab batches" % (str(i), str(len(batches))))
         batch_result = np.sum(
             document_matrix[batches[i]: batches[i + 1]].toarray(), axis=0
         )

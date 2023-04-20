@@ -7,6 +7,8 @@ from sklearn.feature_extraction.text import CountVectorizer
 
 tokenizer = CountVectorizer(token_pattern="(?u)\\b\\w+\\b").build_tokenizer()
 
+import time
+t = time.time()
 
 suite = DataMeasurementSuite(
     dataset="hate_speech18",
@@ -21,4 +23,6 @@ suite = DataMeasurementSuite(
 
 results = suite.run()
 
-results["cooccurences"]
+elapsed = time.time() - t
+print(elapsed)
+# results["cooccurences"]

@@ -4,9 +4,9 @@ from data_measurements.measurements.base import (
     TokenizedDatasetMixin,
 )
 
-from typing import List
 from datasets import Dataset
 import pandas as pd
+import numpy.typing as np
 from sklearn.preprocessing import MultiLabelBinarizer
 
 
@@ -15,11 +15,7 @@ def count_vocab_frequencies(dataset: Dataset):
         .tokenized.explode().value_counts().to_frame(name="count")
 
 
-def calc_p_word(word_count_df):
-    return word_count_df["count"] / float(sum(word_count_df["count"]))
-
-
-def count_words_per_sentence(dataset, vocabulary) -> List:
+def count_words_per_sentence(dataset, vocabulary) -> np.NDArray:
     mlb = MultiLabelBinarizer(classes=vocabulary)
     return mlb.fit_transform(dataset["tokenized_text"])
 
@@ -42,6 +38,8 @@ class CooccurencesResults(DataMeasurementResults):
 
 
 class Cooccurences(TokenizedDatasetMixin, DataMeasurement):
+    # TODO: Closed Class words should be included...
+
     name = "cooccurences"
     identity_terms = [
         "man",
@@ -66,15 +64,20 @@ class Cooccurences(TokenizedDatasetMixin, DataMeasurement):
         "himself",
         "herself",
     ]
+    # TODO: Locked at 1 right now, make this parameterized?
+    min_count = 1
+    # min_count = 10
 
     def measure(self, dataset: Dataset) -> CooccurencesResults:
         dataset = self.tokenize_dataset(dataset)
         word_count_df = count_vocab_frequencies(dataset)
-        vocab_counts_df = calc_p_word(word_count_df)
-        vocabulary = vocab_counts_df.index
+        vocabulary = word_count_df.index
         word_counts_per_sentence = count_words_per_sentence(dataset, vocabulary)
 
         present_terms = vocabulary.intersection(self.identity_terms)
+        min_count = word_count_df.loc[present_terms] >= self.min_count
+        present_terms = min_count.loc[min_count["count"] == True].index
+
         subgroup = pd.DataFrame(word_counts_per_sentence).T.set_index(vocabulary).loc[present_terms].T
         matrix = pd.DataFrame(word_counts_per_sentence.T.dot(subgroup))
 

@@ -284,37 +284,37 @@ class nPMI:
     """
 
     def __init__(self, vocab_counts_df, tokenized_sentence_df, given_id_terms):
-        logs.debug("Initiating assoc class.")
+        # logs.debug("Initiating assoc class.")
         self.vocab_counts_df = vocab_counts_df
         # TODO: Change this logic so just the vocabulary is given.
         self.vocabulary = list(vocab_counts_df.index)
         self.vocab_counts = pd.DataFrame([0] * len(self.vocabulary))
-        logs.debug("vocabulary is is")
-        logs.debug(self.vocab_counts_df)
+        # logs.debug("vocabulary is is")
+        # logs.debug(self.vocab_counts_df)
         self.tokenized_sentence_df = tokenized_sentence_df
-        logs.debug("tokenized sentences are")
-        logs.debug(self.tokenized_sentence_df)
+        # logs.debug("tokenized sentences are")
+        # logs.debug(self.tokenized_sentence_df)
         self.given_id_terms = given_id_terms
-        logs.info("identity terms are")
-        logs.info(self.given_id_terms)
+        # logs.info("identity terms are")
+        # logs.info(self.given_id_terms)
         # Terms we calculate the difference between
         self.paired_terms = pair_terms(given_id_terms)
 
         # Matrix of # sentences x vocabulary size
         self.word_cnts_per_sentence = self.count_words_per_sentence()
-        logs.info("Calculating results...")
+        # logs.info("Calculating results...")
         # Formatted as {subgroup:{"count":{...},"npmi":{...}}}
         self.assoc_results_dict = self.calc_measures()
         # Dictionary keyed by pair tuples. Each value is a dataframe with
         # vocab terms as the index, and columns of paired difference and
         # individual scores for the two identity terms.
-        self.bias_results_dict = self.calc_bias(self.assoc_results_dict)
+        # self.bias_results_dict = self.calc_bias(self.assoc_results_dict)
 
     def count_words_per_sentence(self):
         # Counts the number of each vocabulary item per-sentence in batches.
-        logs.info("Creating co-occurrence matrix for nPMI calculations.")
+        # logs.info("Creating co-occurrence matrix for nPMI calculations.")
         word_cnts_per_sentence = []
-        logs.info(self.tokenized_sentence_df)
+        # logs.info(self.tokenized_sentence_df)
         batches = np.linspace(0, self.tokenized_sentence_df.shape[0],
                               NUM_BATCHES).astype(int)
         # Creates matrix of size # batches x # sentences
@@ -323,11 +323,11 @@ class nPMI:
             # with the occurrence of each word per sentence.
             # vocab_counts_df.index is the vocabulary.
             mlb = MultiLabelBinarizer(classes=self.vocabulary)
-            if batch_num % 100 == 0:
-                logs.debug(
-                    "%s of %s sentence binarize batches." % (
-                        str(batch_num), str(len(batches)))
-                )
+            # if batch_num % 100 == 0:
+            #     logs.debug(
+            #         "%s of %s sentence binarize batches." % (
+            #             str(batch_num), str(len(batches)))
+            #     )
             # Per-sentence word counts
             sentence_batch = self.tokenized_sentence_df[
                              batches[batch_num]:batches[batch_num + 1]]
@@ -338,43 +338,45 @@ class nPMI:
     def calc_measures(self):
         id_results = {}
         for subgroup in self.given_id_terms:
-            logs.info("Calculating for %s " % subgroup)
+            # logs.info("Calculating for %s " % subgroup)
             # Index of the identity term in the vocabulary
             subgroup_idx = self.vocabulary.index(subgroup)
-            print("idx is %s" % subgroup_idx)
-            logs.debug("Calculating co-occurrences...")
+            # print("idx is %s" % subgroup_idx)
+            # logs.debug("Calculating co-occurrences...")
             vocab_cooc_df = self.calc_cooccurrences(subgroup, subgroup_idx)
-            logs.debug("Calculating PMI...")
+            # logs.debug("Calculating PMI...")
             pmi_df = self.calc_PMI(vocab_cooc_df, subgroup)
-            logs.debug("PMI dataframe is:")
-            logs.debug(pmi_df)
-            logs.debug("Calculating nPMI...")
-            npmi_df = self.calc_nPMI(pmi_df, vocab_cooc_df, subgroup)
-            logs.debug("npmi df is")
-            logs.debug(npmi_df)
-            # Create a data structure for the identity term associations
-            id_results[subgroup] = {"count": vocab_cooc_df,
-                                    "pmi": pmi_df,
-                                    "npmi": npmi_df}
-            logs.debug("results_dict is:")
-            print(id_results)
+            # logs.debug("PMI dataframe is:")
+            # logs.debug(pmi_df)
+            # logs.debug("Calculating nPMI...")
+            # npmi_df = self.calc_nPMI(pmi_df, vocab_cooc_df, subgroup)
+            # logs.debug("npmi df is")
+            # logs.debug(npmi_df)
+            # # Create a data structure for the identity term associations
+            id_results[subgroup] = {
+                "count": vocab_cooc_df,
+                # "pmi": pmi_df,
+                # "npmi": npmi_df
+            }
+            # logs.debug("results_dict is:")
+            # print(id_results)
         return id_results
 
     def calc_cooccurrences(self, subgroup, subgroup_idx):
         initialize = True
         coo_df = None
         # Big computation here!  Should only happen once.
-        logs.debug(
-            "Approaching big computation! Here, we binarize all words in the "
-            "sentences, making a sparse matrix of sentences."
-        )
+        # logs.debug(
+        #     "Approaching big computation! Here, we binarize all words in the "
+        #     "sentences, making a sparse matrix of sentences."
+        # )
         for batch_id in range(len(self.word_cnts_per_sentence)):
             # Every 100 batches, print out the progress.
-            if not batch_id % 100:
-                logs.debug(
-                    "%s of %s co-occurrence count batches"
-                    % (str(batch_id), str(len(self.word_cnts_per_sentence)))
-                )
+            # if not batch_id % 100:
+            #     logs.debug(
+            #         "%s of %s co-occurrence count batches"
+            #         % (str(batch_id), str(len(self.word_cnts_per_sentence)))
+            #     )
             # List of all the sentences (list of vocab) in that batch
             batch_sentence_row = self.word_cnts_per_sentence[batch_id]
             # Dataframe of # sentences in batch x vocabulary size
@@ -396,8 +398,8 @@ class nPMI:
             else:
                 coo_df = coo_df.add(batch_coo_df, fill_value=0)
             initialize = False
-        logs.debug("Made co-occurrence matrix")
-        logs.debug(coo_df)
+        # logs.debug("Made co-occurrence matrix")
+        # logs.debug(coo_df)
         count_df = coo_df.set_index(self.vocab_counts_df.index)
         count_df.columns = ["count"]
         count_df["count"] = count_df["count"].astype(int)
