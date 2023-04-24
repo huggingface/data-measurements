@@ -1,13 +1,14 @@
-from data_measurements import DataMeasurementSuite
-from data_measurements.measurements import (
-    Cooccurences
-)
 from sklearn.feature_extraction.text import CountVectorizer
+
+from data_measurements import DataMeasurementSuite
+from data_measurements.measurements import Cooccurences
 
 
 tokenizer = CountVectorizer(token_pattern="(?u)\\b\\w+\\b").build_tokenizer()
 
 import time
+
+
 t = time.time()
 
 suite = DataMeasurementSuite(
@@ -16,9 +17,7 @@ suite = DataMeasurementSuite(
     label="label",
     split="train",
     tokenizer=tokenizer,
-    measurements=[
-        Cooccurences
-    ],
+    measurements=[Cooccurences],
 )
 
 results = suite.run()

@@ -1,10 +1,10 @@
+from statistics import mean, stdev
 from unittest.mock import MagicMock
 
 import pytest
+from datasets import Dataset
 
 from data_measurements.measurements import TextLengths
-from datasets import Dataset
-from statistics import mean, stdev
 
 
 @pytest.fixture
@@ -22,11 +22,13 @@ def mock_statistics(monkeypatch):
 
 @pytest.fixture
 def dataset():
-    return Dataset.from_list([
-        {"text": "Hello world"},
-        {"text": "What is up"},
-        {"text": "Kitty Cat"},
-    ])
+    return Dataset.from_list(
+        [
+            {"text": "Hello world"},
+            {"text": "What is up"},
+            {"text": "Kitty Cat"},
+        ]
+    )
 
 
 def test_text_lengths_initialize(dummy_tokenizer):

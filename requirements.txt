@@ -1,9 +1,0 @@
-pytest
-datasets
-evaluate
-scipy
-matplotlib
-seaborn
-plotly
-numpy
-scikit-learn

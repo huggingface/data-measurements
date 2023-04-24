@@ -1,5 +1,6 @@
-from data_measurements.measurements import TextDuplicates
 from datasets import Dataset
+
+from data_measurements.measurements import TextDuplicates
 
 
 def test_text_duplicates_initialize(mock_load_metric):
@@ -8,9 +9,7 @@ def test_text_duplicates_initialize(mock_load_metric):
 
 
 def test_text_duplicates_run(mock_load_metric):
-    dataset = Dataset.from_dict({
-        "text": ["Hello", "World", "Hello", "Foo Bar"]
-    })
+    dataset = Dataset.from_dict({"text": ["Hello", "World", "Hello", "Foo Bar"]})
     text_duplicates = TextDuplicates(feature="text")
     text_duplicates.measure(dataset)
 

@@ -1,11 +1,8 @@
-from data_measurements import DataMeasurementSuite
-from data_measurements.measurements import (
-    TextDuplicates,
-    TextLengths,
-    LabelDistribution,
-)
-
 from transformers import AutoTokenizer
+
+from data_measurements import DataMeasurementSuite
+from data_measurements.measurements import LabelDistribution, TextDuplicates, TextLengths
+
 
 gpt2_tokenizer = AutoTokenizer.from_pretrained("gpt2")
 

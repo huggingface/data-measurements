@@ -1,5 +1,6 @@
-from data_measurements.measurements import LabelDistribution
 from datasets import Dataset
+
+from data_measurements.measurements import LabelDistribution
 
 
 def test_label_distribution_initialize(mock_load_metric):
@@ -8,10 +9,12 @@ def test_label_distribution_initialize(mock_load_metric):
 
 
 def test_label_distribution_run(mock_load_metric):
-    dataset = Dataset.from_dict({
-        "text": ["Hello", "World", "Hello", "Foo Bar"],
-        "label": [1, 2, 1, 1],
-    })
+    dataset = Dataset.from_dict(
+        {
+            "text": ["Hello", "World", "Hello", "Foo Bar"],
+            "label": [1, 2, 1, 1],
+        }
+    )
     label_distribution = LabelDistribution(feature="label")
     label_distribution.measure(dataset)
 
@@ -19,10 +22,12 @@ def test_label_distribution_run(mock_load_metric):
 
 
 def test_label_distribution_figure(mock_load_metric):
-    dataset = Dataset.from_dict({
-        "text": ["Hello", "World", "Hello", "Foo Bar"],
-        "label": [1, 2, 1, 1],
-    })
+    dataset = Dataset.from_dict(
+        {
+            "text": ["Hello", "World", "Hello", "Foo Bar"],
+            "label": [1, 2, 1, 1],
+        }
+    )
 
     # TODO: Some kind of assertion?
     label_distribution = LabelDistribution(feature="label")

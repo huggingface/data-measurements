@@ -1,15 +1,26 @@
-import pandas as pd
-import pytest
-from unittest.mock import MagicMock
 from enum import Enum
 from typing import Callable
+from unittest.mock import MagicMock
+
+import pandas as pd
+import pytest
+from datasets import Dataset
+
 from data_measurements.measurements import (
-    TextDuplicates, TextDuplicatesResults,
-    TextLengths, TextLengthsResults,
-    LabelDistribution, LabelDistributionResults,
+    LabelDistribution,
+    LabelDistributionResults,
+    TextDuplicates,
+    TextDuplicatesResults,
+    TextLengths,
+    TextLengthsResults,
 )
 
-from datasets import Dataset
+
+def pytest_collection_modifyitems(items):
+    for item in items:
+        if "end_to_end" in item.nodeid:
+            item.add_marker(pytest.mark.slow)
+            item.add_marker(pytest.mark.end_to_end)
 
 
 @pytest.fixture
@@ -31,7 +42,9 @@ def mock_load_metric(monkeypatch):
 @pytest.fixture
 def mock_load_dataset(monkeypatch):
     load_dataset = MagicMock()
-    monkeypatch.setattr("data_measurements.measurement_suite.load_dataset", load_dataset)
+    monkeypatch.setattr(
+        "data_measurements.measurement_suite.load_dataset", load_dataset
+    )
 
     return load_dataset
 
@@ -51,22 +64,17 @@ class MockMeasureMixin:
 @pytest.fixture()
 def mock_measurements():
     mock_results = [
-        TextDuplicatesResults(
-            duplicate_fraction=0.25
-        ),
+        TextDuplicatesResults(duplicate_fraction=0.25),
         TextLengthsResults(
             average_instance_length=2.25,
             standard_dev_instance_length=0.5,
             num_instance_lengths=2,
-            lengths=pd.DataFrame()
+            lengths=pd.DataFrame(),
         ),
         LabelDistributionResults(
-            label_distribution={
-                "labels": [1, 0, 2],
-                "fractions": [0.1, 0.6, 0.3]
-            },
+            label_distribution={"labels": [1, 0, 2], "fractions": [0.1, 0.6, 0.3]},
             label_skew=0.5,
-        )
+        ),
     ]
 
     class MockedTextDuplicates(MockMeasureMixin, TextDuplicates):

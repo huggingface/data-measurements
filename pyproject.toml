@@ -1,0 +1,8 @@
+[tool.pytest.ini_options]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "end_to_end: marks end to end tests (deselect with '-m \"not end_to_end\"')",
+]
+pythonpath = [
+  ".", "src"
+]
