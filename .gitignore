@@ -16,3 +16,4 @@ bak/*
  */*__pycache__*
 temp.jsonl
 *.egg-info
+build/
