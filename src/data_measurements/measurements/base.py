@@ -5,17 +5,36 @@ from typing import Callable, Dict, List, Type
 import evaluate
 from datasets import Dataset
 from evaluate import load as load_metric
+import gradio as gr
 
 
 class DataMeasurementResults(ABC):
     @abc.abstractmethod
     def to_figure(self):
-        # TODO: Set the output type hint for this...
         raise NotImplementedError()
 
     @abc.abstractmethod
     def __eq__(self, other):
         raise NotImplementedError()
+
+
+class Widget(ABC):
+    @abc.abstractmethod
+    def render(self):
+        pass
+
+    @abc.abstractmethod
+    def update(self, results: DataMeasurementResults):
+        pass
+
+    @property
+    @abc.abstractmethod
+    def output_components(self):
+        pass
+
+    @abc.abstractmethod
+    def add_events(self, state: gr.State):
+        pass
 
 
 class DataMeasurement(ABC):
@@ -27,9 +46,41 @@ class DataMeasurement(ABC):
     def name(self):
         raise NotImplementedError()
 
+    @property
     @abc.abstractmethod
-    def measure(self, dataset: List[str]) -> DataMeasurementResults:
+    def widget(self):
         raise NotImplementedError()
+
+    @abc.abstractmethod
+    def measure(self, dataset) -> DataMeasurementResults:
+        raise NotImplementedError()
+
+    @classmethod
+    def standalone(cls):
+        with gr.Blocks() as demo:
+            # TODO: The dataset and the loading args/kwargs for the measurement should probably be passed in
+            dataset = Dataset.from_dict(
+                {
+                    "text": ["Hello", "World", "Hello", "Foo Bar"],
+                    "label": [1, 2, 1, 1],
+                }
+            )
+            measurement = cls(feature="label")
+            results = measurement.measure(dataset)
+
+            widget = measurement.widget()
+            widget.render()
+
+            def update_ui():
+                return widget.update(results)
+
+            demo.load(
+                update_ui,
+                inputs=[],
+                outputs=widget.output_components
+            )
+
+        return demo
 
 
 class DataMeasurementFactory:

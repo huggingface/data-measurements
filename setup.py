@@ -61,6 +61,7 @@ REQUIRED_PKGS = [
     "pytest",
     "datasets",
     "evaluate",
+    "gradio",
     "scipy",
     "matplotlib",
     "seaborn",

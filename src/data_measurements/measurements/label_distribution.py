@@ -2,13 +2,19 @@ from typing import Dict, List
 
 import plotly.express as px
 from datasets import Dataset
+import gradio as gr
 
 from data_measurements.measurements.base import (
     DataMeasurement,
     DataMeasurementResults,
     EvaluateMixin,
     LabelMeasurementMixin,
+    Widget
 )
+
+import utils
+
+logs = utils.prepare_logging(__file__)
 
 
 class LabelDistributionResults(DataMeasurementResults):
@@ -35,8 +41,43 @@ class LabelDistributionResults(DataMeasurementResults):
         return fig_labels
 
 
+class LabelDistributionWidget(Widget):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_dist_plot = gr.Plot(render=False, visible=False)
+        self.label_dist_no_label_text = gr.Markdown(
+            value="No labels were found in the dataset", render=False, visible=False
+        )
+        self.label_dist_accordion = gr.Accordion(render=False, label="", open=False)
+
+    def render(self):
+        with gr.TabItem(label="Label Distribution"):
+            gr.Markdown(
+                "Use this widget to see how balanced the labels in your dataset are."
+            )
+            self.label_dist_plot.render()
+            self.label_dist_no_label_text.render()
+
+    def update(self, results: LabelDistributionResults):
+        output = {
+            self.label_dist_plot: gr.Plot.update(
+                value=results.to_figure(), visible=True
+            ),
+            self.label_dist_no_label_text: gr.Markdown.update(visible=False),
+        }
+        return output
+
+    @property
+    def output_components(self):
+        return [self.label_dist_plot, self.label_dist_no_label_text]
+
+    def add_events(self, state: gr.State):
+        pass
+
+
 class LabelDistribution(LabelMeasurementMixin, EvaluateMixin, DataMeasurement):
     name = "label_distribution"
+    widget = LabelDistributionWidget
 
     def measure(self, dataset: Dataset) -> LabelDistributionResults:
         results = super().run_metric(dataset)
