@@ -56,16 +56,9 @@ class DataMeasurement(ABC):
         raise NotImplementedError()
 
     @classmethod
-    def standalone(cls):
+    def standalone(cls, dataset, *args, **kwargs):
         with gr.Blocks() as demo:
-            # TODO: The dataset and the loading args/kwargs for the measurement should probably be passed in
-            dataset = Dataset.from_dict(
-                {
-                    "text": ["Hello", "World", "Hello", "Foo Bar"],
-                    "label": [1, 2, 1, 1],
-                }
-            )
-            measurement = cls(feature="label")
+            measurement = cls(*args, **kwargs)
             results = measurement.measure(dataset)
 
             widget = measurement.widget()

@@ -23,6 +23,7 @@ class TextDuplicatesResults(DataMeasurementResults):
 
 class TextDuplicates(EvaluateMixin, DataMeasurement):
     name = "text_duplicates"
+    widget = None  # TODO: Implement widget
 
     def measure(self, dataset: Dataset) -> TextDuplicatesResults:
         return TextDuplicatesResults(duplicate_fraction=super().run_metric(dataset)["duplicate_fraction"])

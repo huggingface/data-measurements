@@ -6,14 +6,6 @@ from sklearn.preprocessing import MultiLabelBinarizer
 from data_measurements.measurements.base import DataMeasurement, DataMeasurementResults, TokenizedDatasetMixin
 
 
-def count_vocab_frequencies(dataset: Dataset):
-    return (
-        pd.DataFrame({"tokenized": dataset["tokenized_text"]})
-        .tokenized.explode()
-        .value_counts()
-        .to_frame(name="count")
-    )
-
 
 def count_words_per_sentence(dataset, vocabulary) -> np.NDArray:
     mlb = MultiLabelBinarizer(classes=vocabulary)

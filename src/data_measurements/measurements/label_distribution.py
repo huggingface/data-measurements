@@ -75,6 +75,7 @@ class LabelDistributionWidget(Widget):
         pass
 
 
+# TODO: Implement a CachedMeasurementMixin for handling fetching from a local cache (for all measurements)
 class LabelDistribution(LabelMeasurementMixin, EvaluateMixin, DataMeasurement):
     name = "label_distribution"
     widget = LabelDistributionWidget

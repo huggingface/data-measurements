@@ -3,12 +3,7 @@ from datasets import Dataset
 from data_measurements.measurements.cooccurences import Cooccurences, CooccurencesResults
 
 
-def calc_p_word(word_count_df):
-    word_count_df[PROP] = word_count_df[CNT] / float(sum(word_count_df[CNT]))
-    vocab_counts_df = pd.DataFrame(
-        word_count_df.sort_values(by=CNT, ascending=False))
-    vocab_counts_df[VOCAB] = vocab_counts_df.index
-    return vocab_counts_df
+
 
 
 class PMIResults(CooccurencesResults):

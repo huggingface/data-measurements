@@ -68,6 +68,7 @@ REQUIRED_PKGS = [
     "plotly",
     "numpy",
     "scikit-learn",
+    "nltk"
 ]
 
 TESTS_REQUIRE = [

@@ -1,5 +1,6 @@
 from .base import DataMeasurement, DataMeasurementFactory, DataMeasurementResults
 from .cooccurences import Cooccurences, CooccurencesResults
+from .general_stats import GeneralStats, GeneralStatsResults
 from .label_distribution import LabelDistribution, LabelDistributionResults
 from .pmi import PMI, PMIResults
 from .text_duplicates import TextDuplicates, TextDuplicatesResults
@@ -12,6 +13,8 @@ __all__ = [
     "DataMeasurementResults",
     "Cooccurences",
     "CooccurencesResults",
+    "GeneralStats",
+    "GeneralStatsResults",
     "LabelDistribution",
     "LabelDistributionResults",
     "PMI",
