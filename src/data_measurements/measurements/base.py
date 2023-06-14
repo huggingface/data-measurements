@@ -98,8 +98,8 @@ class EvaluateMixin:
         self.metric: evaluate.EvaluationModule = load_metric(self.name)
         super().__init__(*args, **kwargs)
 
-    def run_metric(self, dataset: Dataset) -> Dict:
-        return self.metric.compute(data=dataset[self.feature])
+    def run_metric(self, dataset: Dataset, *args, **kwargs) -> Dict:
+        return self.metric.compute(data=dataset[self.feature], *args, **kwargs)
 
 
 class TokenizedDatasetMixin:

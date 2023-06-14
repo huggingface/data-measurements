@@ -1,7 +1,6 @@
-from data_measurements.measurements import TextLengths
+from data_measurements.measurements import TextDuplicates
 from datasets import Dataset
 
-# TODO: The dataset and the loading args/kwargs for the measurement should probably be passed in
 dataset = Dataset.from_dict(
     {
         "text": ["Hello", "World", "Hello", "Foo Bar", "wasn", ""],
@@ -14,4 +13,4 @@ def tokenize(sentence: str):
     return sentence.split()
 
 
-TextLengths.standalone(dataset=dataset, feature="text", tokenizer=tokenize).launch()
+TextDuplicates.standalone(dataset=dataset, feature="text").launch()
