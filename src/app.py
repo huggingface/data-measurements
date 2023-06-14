@@ -23,7 +23,8 @@ from utils import gradio_utils as gr_utils
 from data_measurements import DataMeasurementSuite
 from data_measurements.measurements import (
     GeneralStats,
-    LabelDistribution
+    LabelDistribution,
+    TextLengths
 )
 # import widgets
 
@@ -62,6 +63,7 @@ def get_suite():
         measurements=[
             GeneralStats,
             LabelDistribution,
+            TextLengths,
         ],
     )
 
@@ -71,17 +73,11 @@ def get_suite():
 #     """Get the widgets that will be displayed in the UI."""
 #     return [
 #         # widgets.DatasetDescription(DATASET_NAME_TO_DICT),
-#         # widgets.GeneralStats(),
-#         LabelDistribution(feature="text"),  # Would be nice to not have to define the feature here, I guess?
 #         # widgets.TextLengths(),
 #         # widgets.Duplicates(),
 #         # widgets.Npmi(),
 #         # widgets.Zipf()
 #     ]
-
-
-# def get_widgets():
-#     return get_ui_widgets()
 
 
 def get_title(dstats):
