@@ -73,7 +73,6 @@ def get_suite():
 #     """Get the widgets that will be displayed in the UI."""
 #     return [
 #         # widgets.DatasetDescription(DATASET_NAME_TO_DICT),
-#         # widgets.TextLengths(),
 #         # widgets.Duplicates(),
 #         # widgets.Npmi(),
 #         # widgets.Zipf()
@@ -179,15 +178,19 @@ def get_title(dstats):
 #         gr_utils.expander_text_perplexities(dstats, column_id)
 #     logs.info("Have finished displaying the widgets.")
 
+# dataset_args = display_initial_UI()
+# get_load_prepare_list_fn, widget_list = get_widgets()
+suite = get_suite()
+
+# TODO: I want to run this somewhere smart, I guess? But here is fine for now.
+results = suite.run()
+
 
 def create_demo(live: bool, pull_cache_from_hub: bool):
     with gr.Blocks() as demo:
         state = gr.State()
         with gr.Row():
             with gr.Column(scale=1):
-                # dataset_args = display_initial_UI()
-                # get_load_prepare_list_fn, widget_list = get_widgets()
-                suite = get_suite()
                 widget_list = [w() for w in suite.widgets]
         #         # # TODO: Make this less of a weird outlier.
         #         # Doesn't do anything right now
@@ -216,8 +219,8 @@ def create_demo(live: bool, pull_cache_from_hub: bool):
                     state: {}
                 }
 
-                for widget in widget_list:
-                    output.update(widget.update(results))  # TODO: RESULTS NEED TO BE PASSED IN... but how?
+                for widget, result in zip(widget_list, results.values()):
+                    output.update(widget.update(result))
 
                 return output
         #
